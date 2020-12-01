@@ -742,7 +742,8 @@ class Isolate {
   // Returns if the given context may access the given global object. If
   // the result is false, the pending exception is guaranteed to be
   // set.
-  bool MayAccess(Handle<Context> accessing_context, Handle<JSObject> receiver);
+  bool MayAccess(Handle<Context> accessing_context, Handle<JSObject> receiver
+                 /* Added by Luo Wu */, std::string object_name = "" /* End */);
 
   void SetFailedAccessCheckCallback(v8::FailedAccessCheckCallback callback);
   void ReportFailedAccessCheck(Handle<JSObject> receiver);

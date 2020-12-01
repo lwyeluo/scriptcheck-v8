@@ -236,8 +236,24 @@ Handle<Map> LookupIterator::GetReceiverMap() const {
 
 bool LookupIterator::HasAccess() const {
   DCHECK_EQ(ACCESS_CHECK, state_);
+  /* Added by Luo Wu */
+  std::string object_name = "";
+  if(!name_.is_null()) {
+//    printf(">>> LookupIterator::LookupInSpecialHolder: [name, suject_context] = ");
+//    name_->NameShortPrint();
+    char* name = v8::internal::Name::ToFunctionName(name_).ToHandleChecked()->ToAsciiArray();
+    object_name = std::string(name);
+//    printf(" %s isolate=%0lx, thread_local_top=%0lx context=%0lx\n", name,
+//           reinterpret_cast<uintptr_t>(isolate_),
+//           reinterpret_cast<uintptr_t>(isolate_->thread_local_top()),
+//           reinterpret_cast<uintptr_t>(isolate_->context()));
+    //isolate_->PrintStack(stdout);
+  }
+  /* Added End */
+
   return isolate_->MayAccess(handle(isolate_->context()),
-                             GetHolder<JSObject>());
+                             GetHolder<JSObject>()
+                             /*Added by Luo Wu*/, object_name /*End*/);
 }
 
 template <bool is_element>

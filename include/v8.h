@@ -5425,7 +5425,9 @@ enum AccessType {
  */
 typedef bool (*AccessCheckCallback)(Local<Context> accessing_context,
                                     Local<Object> accessed_object,
-                                    Local<Value> data);
+                                    Local<Value> data
+                                    /* Added by Luo Wu */, std::string object_name /* END */
+                                    );
 
 /**
  * A FunctionTemplate is used to create functions at runtime. There

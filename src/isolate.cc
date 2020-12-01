@@ -956,7 +956,9 @@ void Isolate::ReportFailedAccessCheck(Handle<JSObject> receiver) {
 
 
 bool Isolate::MayAccess(Handle<Context> accessing_context,
-                        Handle<JSObject> receiver) {
+                        Handle<JSObject> receiver
+                        /* Added by Luo Wu */, std::string object_name /* End */
+                        ) {
   DCHECK(receiver->IsJSGlobalProxy() || receiver->IsAccessCheckNeeded());
 
   // Check for compatibility between the security tokens in the
@@ -977,10 +979,18 @@ bool Isolate::MayAccess(Handle<Context> accessing_context,
       Context* native_context =
           accessing_context->global_object()->native_context();
       if (receiver_context == native_context) return true;
-
-      if (Context::cast(receiver_context)->security_token() ==
-          native_context->security_token())
-        return true;
+      /*
+       * Commented by Luo Wu
+       *
+       *  if there is an access for same-origin frames, this function returns true,
+       *   and never jump into the |callback| function in the binding layer. We want to
+       *   check all cross-context access, so we let it to invoke the binding
+       *   layer no matter the frame accessed is same-origin or cross-origin or same-frame.
+       *
+       */
+//      if (Context::cast(receiver_context)->security_token() ==
+//          native_context->security_token())
+//        return true;
     }
   }
 
@@ -1001,7 +1011,8 @@ bool Isolate::MayAccess(Handle<Context> accessing_context,
     // Leaving JavaScript.
     VMState<EXTERNAL> state(this);
     return callback(v8::Utils::ToLocal(accessing_context),
-                    v8::Utils::ToLocal(receiver), v8::Utils::ToLocal(data));
+                    v8::Utils::ToLocal(receiver), v8::Utils::ToLocal(data)
+                    /* Added by Luo Wu */, object_name /* End */);
   }
 }
 
